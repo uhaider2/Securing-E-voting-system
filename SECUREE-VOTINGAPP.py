@@ -13,6 +13,8 @@ import sqlite3
 import pandas as pd
 import numpy as np
 import cv2
+st.write("OpenCV Version:", cv2.__version__)
+st.write("CascadeClassifier available:", hasattr(cv2, "CascadeClassifier"))
 import os
 import math
 import html
