@@ -1122,14 +1122,16 @@ def capture_face(key_prefix, ready_key, frame_key):
     )
 
     # Baqi aapka existing code yahan
-    ctx = webrtc_streamer(
-        key=f"{key_prefix}-auto-capture",
-        mode=WebRtcMode.SENDRECV,
-        video_processor_factory=SteadyFaceCaptureProcessor,
-        media_stream_constraints={
-            "video": True,
-            "audio": False
-        },
+ctx = webrtc_streamer(
+    key=f"{key_prefix}-auto-capture",
+    mode=WebRtcMode.SENDRECV,
+    video_processor_factory=SteadyFaceCaptureProcessor,
+    media_stream_constraints={
+        "video": True,
+        "audio": False
+    },
+    async_processing=True,
+)
         rtc_configuration={
             "iceServers": [
                 {"urls": ["stun:stun.l.google.com:19302"]},
