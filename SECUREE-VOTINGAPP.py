@@ -1168,6 +1168,16 @@ def render_auto_face_capture(key_prefix):
             "Place your face in front of the camera, looking straight ahead..."
         )
         return None
+        rtc_configuration={
+    "iceServers": [
+        {
+            "urls": ["stun:stun.l.google.com:19302"]
+        },
+        {
+            "urls": ["stun:stun1.l.google.com:19302"]
+        }
+    ],
+},
 # ==================== DEPARTMENT LOGIC ====================
 
 def add_department(name):
