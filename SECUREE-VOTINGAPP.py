@@ -113,16 +113,13 @@ _face_path = resolve_cascade_path("haarcascade_frontalface_default.xml")
 _eye_path = resolve_cascade_path("haarcascade_eye.xml")
 _eye_glasses_path = resolve_cascade_path("haarcascade_eye_tree_eyeglasses.xml")
 
-import cv2
-
 _face_path = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 
 face_cascade = cv2.CascadeClassifier(_face_path)
 
 if face_cascade.empty():
-    st.error("Face detection model could not be loaded.")
+    st.error("Face detection model could not be loaded!")
     st.stop()
-    face_cascade = cv2.CascadeClassifier(_face_path) if _face_path else cv2.CascadeClassifier()
 eye_cascade = cv2.CascadeClassifier(_eye_path) if _eye_path else cv2.CascadeClassifier()
 eye_glasses_cascade = cv2.CascadeClassifier(_eye_glasses_path) if _eye_glasses_path else cv2.CascadeClassifier()
 
