@@ -1,0 +1,16 @@
+streamlit
+streamlit-webrtc
+av
+opencv-contrib-python
+numpy
+pandas
+Pillow
+
+# --- CNN-based face detection + recognition (FR-4 / FR-6, SRS-compliant) ---
+# YOLOv8-face (Ultralytics) = face DETECTION CNN
+# InsightFace ArcFace (buffalo_l) = face RECOGNITION/embedding CNN
+# Both auto-download their model weights on first run - an internet
+# connection is needed once, after that everything works offline.
+ultralytics
+insightface
+onnxruntime

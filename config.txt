@@ -1,0 +1,22 @@
+[theme]
+base = "light"
+primaryColor = "#2563EB"
+backgroundColor = "#F4F5F9"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1A1A2E"
+font = "sans serif"
+
+[server]
+# Listen on all local network interfaces so other machines on the SAME
+# intranet/LAN can reach this app via http://<this-PC-LAN-IP>:8501
+# It will NOT be reachable from the public internet unless you separately
+# forward this port on your router (do not do that for this app).
+address = "0.0.0.0"
+port = 8501
+headless = true
+enableCORS = false
+enableXsrfProtection = true
+
+[browser]
+# Prevents Streamlit from advertising an external/public URL in the console
+gatherUsageStats = false

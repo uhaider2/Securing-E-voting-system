@@ -1,0 +1,188 @@
+Secure Intranet-Based E-Voting System with Facial Recognition
+1. Project Description
+The Secure Intranet-Based E-Voting System is a web-based application
+designed for controlled elections within a university, organization, or
+society network. It provides voter registration, facial verification,
+liveness checks, candidate management, vote casting, election
+monitoring, and results viewing.
+The application is intended for use on a trusted local network
+(LAN/intranet). It is an academic project prototype and should be
+security-tested before any real election.
+2. Tools and Technologies
+- Programming language: Python
+- User interface / web application: Streamlit
+- Database: SQLite
+- Image processing: OpenCV
+- Face detection: YOLOv8-face (Ultralytics), with OpenCV Haar
+  Cascade fallback
+- Facial recognition / embeddings: InsightFace ArcFace
+  (buffalo_l)
+- Numerical and image handling: NumPy, Pillow
+- Camera streaming: Streamlit WebRTC (streamlit-webrtc)
+- Email notifications: SMTP (optional; requires configuration)
+- Integrity checks: SHA-256-based vote hash chain and receipt
+  verification
+The current code uses SQLite and Streamlit. Do not describe it as a
+Flask/MySQL application unless the implementation is changed.
+
+3. Main Features
+- Admin/election-officer functions for managing or monitoring
+  elections.
+- Voter registration and CNIC-format validation.
+- Facial data capture and face matching using ArcFace embeddings.
+- Blink-based liveness checks and basic photo/screen-spoofing
+  heuristics.
+- Candidate management and voter eligibility checks.
+- One-vote-per-voter application checks.
+- Campus-radius distance check using supplied latitude and longitude.
+- Election results and turnout monitoring.
+- Authentication logs, vote-integrity verification, and vote receipt
+  verification.
+- Optional email OTP/notifications through SMTP.
+4. System Requirements
+- Windows, Linux, or macOS.
+- Python 3.10 or another Python version compatible with the installed
+  dependencies.
+- A working webcam for camera-based registration and liveness checks.
+- Internet access on first launch may be required to download YOLO
+  face weights and the InsightFace model pack. After model files are
+  downloaded, some functions may work offline, depending on the
+  environment.
+- Sufficient RAM and disk space for Python packages and
+  face-recognition models.
+- For intranet deployment, computers should be on the same local
+  network and the host firewall should allow the selected application
+  port.
+5. Installation
+Step 1 --- Install Python
+Install Python from https://www.python.org/downloads/ and confirm it is
+available in your terminal:
+python --version
+Step 2 --- Open the project folder
+Copy the complete project folder from the submission USB to your
+computer. Open a terminal or command prompt in that folder.
+Step 3 --- Create and activate a virtual environment (recommended)
+python -m venv .venv
+Windows:
+.venv\Scripts\activate
+Linux/macOS:
+source .venv/bin/activate
+Step 4 --- Install dependencies
+Install the packages used by the project:
+python -m pip install --upgrade pip
+python -m pip install streamlit streamlit-webrtc opencv-python numpy pandas Pillow ultralytics insightface onnxruntime
+If your source code imports any additional third-party package, install
+it as well. For a reproducible submission, save the final tested
+dependencies in a requirements.txt file.
+6. Model Files and Dependencies
+On first launch, the application attempts to obtain the YOLOv8-face
+weights and InsightFace buffalo_l model pack. This may require
+internet access. If automatic download fails, check the terminal error
+and ensure the machine can access the model source. The OpenCV Haar
+Cascade fallback may be used if YOLO face weights are unavailable, but
+ArcFace recognition still requires its model pack.
+Do not delete downloaded model files while the application is running.
+Keep any required model weights or configuration files with the project
+if the department requires a fully offline demonstration, subject to
+their license and size.
+7. Database Setup
+The application uses SQLite. The database is created/initialized by the
+application code when it starts or when its initialization function
+runs.
+1. Keep the database file in the project's expected location.
+2. Run the application and check the terminal for database
+   initialization errors.
+3. For submission, include the required database file only if it is
+   intended as part of the demo dataset.
+4. Do not include real voters' CNICs, facial data, passwords, or other
+   personal information in the USB submission. Use dummy/test records
+   wherever possible.
+5. Back up the database before testing destructive operations.
+If the code contains a database path or configuration constant, preserve
+the expected path or update it consistently before running.
+8. Optional Email / OTP Configuration
+Real email delivery is optional. If SMTP settings are not configured,
+the application may print email/OTP content to the terminal for
+development and testing.
+Set these environment variables only if you want to enable SMTP
+delivery:
+- EVOTING_SMTP_HOST
+- EVOTING_SMTP_PORT (commonly 587)
+- EVOTING_SMTP_USER
+- EVOTING_SMTP_PASSWORD
+- EVOTING_SMTP_FROM (optional; defaults to the SMTP username)
+Do not commit email passwords or other secrets into source code or the
+USB README.
+9. Running the Project
+1. Activate the virtual environment.
+2. Open the project folder in the terminal.
+3. Run the main Streamlit Python file. If the main file is named
+   app.py, use:
+streamlit run app.py
+4. Streamlit will display a local URL in the terminal, commonly
+   http://localhost:8501. Open that address in a browser.
+5. Allow camera access when the browser requests permission.
+6. Follow the on-screen registration, authentication, voting, and
+   results workflows.
+Important: If your main source file has a different name, replace
+app.py with its actual filename.
+10. Running on a Local Network (LAN / Intranet)
+For a classroom demonstration on a local network, configure Streamlit to
+listen on the host machine's network interface, for example:
+streamlit run app.py --server.address 0.0.0.0 --server.port 8501
+Find the host computer's private LAN IP address and open
+http://HOST-LAN-IP:8501 from another device on the same network.
+Replace HOST-LAN-IP with the actual address.
+Only do this on a trusted network with firewall rules and access
+controls configured. Binding to 0.0.0.0 can expose the application to
+other devices reachable from that machine. A LAN address alone does not
+provide encryption or guarantee that access is restricted to the campus.
+Do not expose the application directly to the public internet.
+11. Basic Troubleshooting
+- streamlit command not found: Activate the virtual environment
+  and run python -m pip install streamlit.
+- Camera not opening: Use a supported browser, grant camera
+  permission, and check that another application is not using the
+  webcam.
+- Face model fails to load: Check the terminal output and internet
+  access for the first model download; confirm insightface,
+  onnxruntime, and ultralytics are installed.
+- Port already in use: Run on another port, for example
+  streamlit run app.py --server.port 8502.
+- Email is not received: Configure SMTP variables; without SMTP
+  configuration, messages may only be printed to the terminal.
+- Database error: Confirm the application has permission to write
+  to the database directory and that the expected database path is
+  correct.
+12. Security and Project Limitations
+- This is a university project prototype, not a certified election
+  system.
+- The GPS check calculates distance from latitude/longitude values
+  supplied to the application; it does not by itself prove the
+  device's real location.
+- Blink detection and image heuristics are basic liveness checks and
+  cannot guarantee resistance to all spoofing attacks.
+- A vote hash chain can help detect certain database changes, but it
+  is not blockchain and should not be treated as tamper-proof if an
+  attacker can rewrite the database and all related hashes.
+- Before real deployment, review authentication, default credentials,
+  session handling, database permissions, ballot secrecy, network
+  encryption, backups, and independent security testing.
+13. Suggested Submission Folder
+FYP-II-Submission/
+├── Final_Report/
+│   └── FYP-II-Final-Report.pdf
+├── Source_Code/
+│   ├── app.py
+│   ├── cascades/                 # if used by the project
+│   └── other project files
+├── Database_Dataset/
+│   └── demo database or test dataset, if required
+└── README.md
+Adjust the example filenames and folders to match the actual project
+files before submission.
+14. Academic Use
+This project was developed for academic demonstration of facial
+authentication and controlled intranet voting workflows. Use test data
+for demonstrations and follow the university's data-protection and
+project-submission policies.
