@@ -32,7 +32,7 @@ from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, WebRtcMode
 import av
 from ultralytics import YOLO
 from insightface.app import FaceAnalysis
-
+from email.mime.multipart import MIMEMultipart
 # ==================== CONFIGURATION ====================
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "evoting.db")
@@ -67,6 +67,36 @@ SMTP_PASSWORD = os.environ.get("EVOTING_SMTP_PASSWORD", "")
 SMTP_FROM = os.environ.get("EVOTING_SMTP_FROM", SMTP_USER)
 OTP_VALID_MINUTES = 10
 
+def send_otp_email(receiver_email, otp):
+
+    if not SMTP_HOST or not SMTP_USER or not SMTP_PASSWORD:
+        st.error("SMTP settings are missing!")
+        return False
+
+    msg = MIMEText(
+        f"Your Secure E-Voting OTP is: {otp}\n\n"
+        f"This OTP is valid for {OTP_VALID_MINUTES} minutes."
+    )
+
+    msg["Subject"] = "Secure E-Voting - OTP Verification"
+    msg["From"] = SMTP_FROM
+    msg["To"] = receiver_email
+
+    try:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20) as server:
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.sendmail(
+                SMTP_FROM,
+                receiver_email,
+                msg.as_string()
+            )
+
+        return True
+
+    except Exception as e:
+        st.error(f"SMTP Error: {e}")
+        return False
 # TESTING ONLY: when SMTP is not configured, show the OTP on screen so the
 # candidate registration flow can be tested. Set to False before real deployment.
 DEV_SHOW_OTP_WHEN_NO_SMTP = True
