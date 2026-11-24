@@ -1105,7 +1105,6 @@ def render_auto_face_capture(key_prefix):
                "the photo will be captured automatically. Step back slightly from the camera (~50-70cm) "
                "so your whole face fits in the frame.")
 
-    ```python
 ctx = webrtc_streamer(
     key=f"{key_prefix}-auto-capture",
     mode=WebRtcMode.SENDRECV,
