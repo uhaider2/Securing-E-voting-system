@@ -1115,8 +1115,8 @@ def render_auto_face_capture(key_prefix):
     ready_key = f"{key_prefix}_auto_ready"
     frame_key = f"{key_prefix}_auto_frame"
 
-   def capture_face(key_prefix, ready_key, frame_key):
-
+def capture_face(key_prefix, ready_key, frame_key):
+       
     st.caption(
         "Turn on the camera and look straight ahead. "
         "Your photo will be captured automatically."
