@@ -1105,54 +1105,69 @@ def render_auto_face_capture(key_prefix):
                "the photo will be captured automatically. Step back slightly from the camera (~50-70cm) "
                "so your whole face fits in the frame.")
 
-ctx = webrtc_streamer(
-    key=f"{key_prefix}-auto-capture",
-    mode=WebRtcMode.SENDRECV,
-    video_processor_factory=SteadyFaceCaptureProcessor,
-    media_stream_constraints={
-        "video": True,
-        "audio": False
-    },
-    rtc_configuration={
-        "iceServers": [
-            {
-                "urls": [
-                    "stun:stun.l.google.com:19302",
-                    "stun:stun1.l.google.com:19302"
-                ]
-            }
-        ]
-    },
-    async_processing=True,
-)
+def render_auto_face_capture(key_prefix):
+    ready_key = f"{key_prefix}_auto_ready"
+    frame_key = f"{key_prefix}_auto_frame"
 
-if ctx.video_processor:
-    with ctx.video_processor.lock:
-        if ctx.video_processor.state == "done" and not st.session_state.get(ready_key):
-            st.session_state[frame_key] = ctx.video_processor.captured_frame.copy()
-            st.session_state[ready_key] = True
-
-if st.session_state.get(ready_key):
-    st.success("Photo automatically captured.")
-    st.image(
-        cv2.cvtColor(st.session_state[frame_key], cv2.COLOR_BGR2RGB),
-        caption="Captured photo",
-        width="stretch"
+    ctx = webrtc_streamer(
+        key=f"{key_prefix}-auto-capture",
+        mode=WebRtcMode.SENDRECV,
+        video_processor_factory=SteadyFaceCaptureProcessor,
+        media_stream_constraints={
+            "video": True,
+            "audio": False
+        },
+        rtc_configuration={
+            "iceServers": [
+                {
+                    "urls": [
+                        "stun:stun.l.google.com:19302",
+                        "stun:stun1.l.google.com:19302"
+                    ]
+                }
+            ]
+        },
+        async_processing=True,
     )
 
-    if st.button("Retake", key=f"{key_prefix}_retake"):
-        if ctx.video_processor:
-            ctx.video_processor.reset()
+    if ctx.video_processor:
+        with ctx.video_processor.lock:
+            if (
+                ctx.video_processor.state == "done"
+                and not st.session_state.get(ready_key)
+            ):
+                st.session_state[frame_key] = (
+                    ctx.video_processor.captured_frame.copy()
+                )
+                st.session_state[ready_key] = True
 
-        st.session_state.pop(ready_key, None)
-        st.session_state.pop(frame_key, None)
-        st.rerun()
+    if st.session_state.get(ready_key):
+        st.success("Photo automatically captured.")
 
-    return st.session_state[frame_key]
+        st.image(
+            cv2.cvtColor(
+                st.session_state[frame_key],
+                cv2.COLOR_BGR2RGB
+            ),
+            caption="Captured photo",
+            width="stretch"
+        )
 
-else:
-    st.info("Place your face in front of the camera, looking straight ahead...")
-    return None
+        if st.button("Retake", key=f"{key_prefix}_retake"):
+            if ctx.video_processor:
+                ctx.video_processor.reset()
+
+            st.session_state.pop(ready_key, None)
+            st.session_state.pop(frame_key, None)
+            st.rerun()
+
+        return st.session_state[frame_key]
+
+    else:
+        st.info(
+            "Place your face in front of the camera, looking straight ahead..."
+        )
+        return None
 # ==================== DEPARTMENT LOGIC ====================
 
 def add_department(name):
