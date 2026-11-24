@@ -60,13 +60,30 @@ STEADY_FACE_FRAMES_REQUIRED = 8
 # Set these as environment variables before launching the app to send real
 # emails (OTP codes, candidacy approval/rejection notices). If left blank,
 # the app falls back to logging the email content to the terminal.
-SMTP_HOST = os.environ.get("EVOTING_SMTP_HOST", "")
-SMTP_PORT = int(os.environ.get("EVOTING_SMTP_PORT", "587"))
-SMTP_USER = os.environ.get("EVOTING_SMTP_USER", "")
-SMTP_PASSWORD = os.environ.get("EVOTING_SMTP_PASSWORD", "")
-SMTP_FROM = os.environ.get("EVOTING_SMTP_FROM", SMTP_USER)
-OTP_VALID_MINUTES = 10
+SMTP_HOST = st.secrets.get(
+    "EVOTING_SMTP_HOST",
+    os.environ.get("EVOTING_SMTP_HOST", "")
+)
 
+SMTP_PORT = int(st.secrets.get(
+    "EVOTING_SMTP_PORT",
+    os.environ.get("EVOTING_SMTP_PORT", "587")
+))
+
+SMTP_USER = st.secrets.get(
+    "EVOTING_SMTP_USER",
+    os.environ.get("EVOTING_SMTP_USER", "")
+)
+
+SMTP_PASSWORD = st.secrets.get(
+    "EVOTING_SMTP_PASSWORD",
+    os.environ.get("EVOTING_SMTP_PASSWORD", "")
+)
+
+SMTP_FROM = st.secrets.get(
+    "EVOTING_SMTP_FROM",
+    os.environ.get("EVOTING_SMTP_FROM", SMTP_USER)
+)
 def send_otp_email(receiver_email, otp):
 
     if not SMTP_HOST or not SMTP_USER or not SMTP_PASSWORD:
