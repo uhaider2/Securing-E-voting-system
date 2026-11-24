@@ -1058,7 +1058,6 @@ class SteadyFaceCaptureProcessor(VideoProcessorBase):
         self.state = "waiting"
 
     def reset(self):
-        """FIX: lets the Retake button restart the capture from scratch."""
         with self.lock:
             self.captured_frame = None
             self.streak = 0
@@ -1067,14 +1066,16 @@ class SteadyFaceCaptureProcessor(VideoProcessorBase):
     def recv(self, frame):
         img = frame.to_ndarray(format="bgr24")
         label, color = "", (0, 255, 0)
+
         try:
             if not CASCADES_OK:
-                label = "ERROR: face cascade files not loaded (see terminal)"
+                label = "ERROR: face cascade files not loaded"
                 color = (0, 0, 255)
             else:
                 with self.lock:
                     if self.state == "waiting":
                         faces = _detect_faces(img)
+
                         if len(faces) > 0:
                             self.streak += 1
                         else:
@@ -1084,16 +1085,29 @@ class SteadyFaceCaptureProcessor(VideoProcessorBase):
                             self.captured_frame = img.copy()
                             self.state = "done"
 
-                    remaining = max(0, STEADY_FACE_FRAMES_REQUIRED - self.streak)
-                    label = "Captured!" if self.state == "done" else f"Hold still... {remaining}"
+                    remaining = max(
+                        0,
+                        STEADY_FACE_FRAMES_REQUIRED - self.streak
+                    )
+
+                    label = (
+                        "Captured!"
+                        if self.state == "done"
+                        else f"Hold still... {remaining}"
+                    )
+
         except Exception as e:
             import traceback
-            print("SteadyFaceCaptureProcessor.recv() error:", e)
+            print("Face capture error:", e)
             traceback.print_exc()
             label = f"ERROR: {e}"
             color = (0, 0, 255)
 
-        cv2.putText(img, label, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
+        cv2.putText(
+            img, label, (10, 30),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2
+        )
+
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 
@@ -1101,13 +1115,10 @@ def render_auto_face_capture(key_prefix):
     ready_key = f"{key_prefix}_auto_ready"
     frame_key = f"{key_prefix}_auto_frame"
 
-    st.caption("Turn on the camera and look straight ahead - once your face is steadily detected, "
-               "the photo will be captured automatically. Step back slightly from the camera (~50-70cm) "
-               "so your whole face fits in the frame.")
-
-def render_auto_face_capture(key_prefix):
-    ready_key = f"{key_prefix}_auto_ready"
-    frame_key = f"{key_prefix}_auto_frame"
+    st.caption(
+        "Turn on the camera and look straight ahead. "
+        "Your photo will be captured automatically."
+    )
 
     ctx = webrtc_streamer(
         key=f"{key_prefix}-auto-capture",
@@ -1119,12 +1130,8 @@ def render_auto_face_capture(key_prefix):
         },
         rtc_configuration={
             "iceServers": [
-                {
-                    "urls": [
-                        "stun:stun.l.google.com:19302",
-                        "stun:stun1.l.google.com:19302"
-                    ]
-                }
+                {"urls": ["stun:stun.l.google.com:19302"]},
+                {"urls": ["stun:stun1.l.google.com:19302"]}
             ]
         },
         async_processing=True,
@@ -1163,21 +1170,11 @@ def render_auto_face_capture(key_prefix):
 
         return st.session_state[frame_key]
 
-    else:
-        st.info(
-            "Place your face in front of the camera, looking straight ahead..."
-        )
-        return None
-        rtc_configuration={
-    "iceServers": [
-        {
-            "urls": ["stun:stun.l.google.com:19302"]
-        },
-        {
-            "urls": ["stun:stun1.l.google.com:19302"]
-        }
-    ],
-},
+    st.info("Place your face in front of the camera...")
+    return None
+
+
+# ==================== DEPARTMENT LOGIC ====================
 # ==================== DEPARTMENT LOGIC ====================
 
 def add_department(name):
