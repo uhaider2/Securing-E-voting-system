@@ -1153,7 +1153,6 @@ if st.session_state.get(ready_key):
 else:
     st.info("Place your face in front of the camera, looking straight ahead...")
     return None
-```
 # ==================== DEPARTMENT LOGIC ====================
 
 def add_department(name):
