@@ -1110,34 +1110,33 @@ class SteadyFaceCaptureProcessor(VideoProcessorBase):
 
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
-
+```python
 def render_auto_face_capture(key_prefix):
     ready_key = f"{key_prefix}_auto_ready"
     frame_key = f"{key_prefix}_auto_frame"
 
-def capture_face(key_prefix, ready_key, frame_key):
     st.caption(
         "Turn on the camera and look straight ahead. "
         "Your photo will be captured automatically."
     )
 
-    # Baqi aapka existing code yahan
-ctx = webrtc_streamer(
-    key=f"{key_prefix}-auto-capture",
-    mode=WebRtcMode.SENDRECV,
-    video_processor_factory=SteadyFaceCaptureProcessor,
-    media_stream_constraints={
-        "video": True,
-        "audio": False
-    },
-    rtc_configuration={
-        "iceServers": [
-            {"urls": ["stun:stun.l.google.com:19302"]},
-            {"urls": ["stun:stun1.l.google.com:19302"]}
-        ]
-    },
-    async_processing=True,
-)
+    ctx = webrtc_streamer(
+        key=f"{key_prefix}-auto-capture",
+        mode=WebRtcMode.SENDRECV,
+        video_processor_factory=SteadyFaceCaptureProcessor,
+        media_stream_constraints={
+            "video": True,
+            "audio": False
+        },
+        rtc_configuration={
+            "iceServers": [
+                {"urls": ["stun:stun.l.google.com:19302"]},
+                {"urls": ["stun:stun1.l.google.com:19302"]}
+            ]
+        },
+        async_processing=True,
+    )
+
     if ctx.video_processor:
         with ctx.video_processor.lock:
             if (
@@ -1173,7 +1172,7 @@ ctx = webrtc_streamer(
 
     st.info("Place your face in front of the camera...")
     return None
-
+```
 
 # ==================== DEPARTMENT LOGIC ====================
 # ==================== DEPARTMENT LOGIC ====================
