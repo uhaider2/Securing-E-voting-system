@@ -1110,7 +1110,6 @@ class SteadyFaceCaptureProcessor(VideoProcessorBase):
 
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
-```python
 def render_auto_face_capture(key_prefix):
     ready_key = f"{key_prefix}_auto_ready"
     frame_key = f"{key_prefix}_auto_frame"
@@ -1172,7 +1171,7 @@ def render_auto_face_capture(key_prefix):
 
     st.info("Place your face in front of the camera...")
     return None
-```
+
 
 # ==================== DEPARTMENT LOGIC ====================
 # ==================== DEPARTMENT LOGIC ====================
