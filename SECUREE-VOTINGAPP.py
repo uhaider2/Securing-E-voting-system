@@ -1,5 +1,6 @@
 import sys
 import asyncio
+import ssl
 
 # --- Fix for Windows: aiortc/streamlit-webrtc raises noisy WinError 10054
 # ConnectionResetError tracebacks on the default ProactorEventLoop when a
@@ -107,9 +108,17 @@ def send_otp_email(receiver_email, otp):
     msg["To"] = receiver_email
 
     try:
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20) as server:
-            server.starttls()
+        context = ssl.create_default_context()
+
+        with smtplib.SMTP_SSL(
+            SMTP_HOST,
+            465,
+            timeout=30,
+            context=context
+        ) as server:
+
             server.login(SMTP_USER, SMTP_PASSWORD)
+
             server.sendmail(
                 SMTP_FROM,
                 receiver_email,
